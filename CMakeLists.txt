@@ -42,26 +42,26 @@ catkin_package(
   message_runtime
 )
 
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-  ${autoware_msgs_INCLUDE_DIRS}
-  ${autoware_config_msgs_INCLUDE_DIRS}
-)
-
-add_executable(state_interpreter_node
-src/state_interpreter_node.cpp
-src/state_interpreter.cpp)
-
-target_link_libraries(state_interpreter_node
-  ${catkin_LIBRARIES}
-  -lyaml-cpp
-)
-
-add_dependencies(state_interpreter_node autoware_msgs_generate_msgs_cpp ${catkin_EXPORTED_TARGETS})
-
-install(TARGETS state_interpreter_node
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+# include_directories(
+#   include
+#   ${catkin_INCLUDE_DIRS}
+#   ${autoware_msgs_INCLUDE_DIRS}
+#   ${autoware_config_msgs_INCLUDE_DIRS}
+# )
+#
+# add_executable(state_interpreter_node
+# src/state_interpreter_node.cpp
+# src/state_interpreter.cpp)
+#
+# target_link_libraries(state_interpreter_node
+#   ${catkin_LIBRARIES}
+#   -lyaml-cpp
+# )
+#
+# add_dependencies(state_interpreter_node autoware_msgs_generate_msgs_cpp ${catkin_EXPORTED_TARGETS})
+#
+# install(TARGETS state_interpreter_node
+#         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#         RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
