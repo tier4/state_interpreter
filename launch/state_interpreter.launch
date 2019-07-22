@@ -1,0 +1,23 @@
+<launch>
+  <arg name="text_publish_topic" default="/state_interpreter/state_text" />
+  <arg name="sound_bgm_topic" default="/sound_bgm/robotsound" />
+  <arg name="sound_voice_topic" default="/sound_voice/robotsound" />
+  <arg name="state_img_files" default="$(find state_interpreter)/state_img_files.yaml" />
+
+  <group ns="sound_bgm">
+    <node pkg="sound_play" type="soundplay_node.py" name="soundplay_node" output="screen"/>
+  </group>
+
+  <group ns="sound_voice">
+    <node pkg="sound_play" type="soundplay_node.py" name="soundplay_node" output="screen"/>
+  </group>
+
+  <node pkg="state_interpreter" type="state_interpreter_node" name="state_interpreter" output="screen">
+    <param name="text_publish_topic" value="$(arg text_publish_topic)" />
+    <param name="sound_bgm_topic" value="$(arg sound_bgm_topic)" />
+    <param name="sound_voice_topic" value="$(arg sound_voice_topic)" />
+    <param name="state_img_files" value="$(arg state_img_files)" />
+  </node>
+
+
+</launch>

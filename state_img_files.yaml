@@ -1,0 +1,46 @@
+---
+- state: Init
+  text: "起動中..."
+  img_path: "$(env HOME)/data/img_src/init.png"
+- state: Charging
+  text: "充電中"
+  img_path: "$(env HOME)/data/img_src/charging.png"
+- state: Emergency
+  text: "異常発生"
+  img_path: "$(env HOME)/data/img_src/emergency.png"
+- state: RouteReceving
+  text: "経路受信中"
+  img_path: "$(env HOME)/data/img_src/route_receiving.png"
+- state: WaitEngage
+  text: "発進指示待ち"
+  img_path: "$(env HOME)/data/img_src/wait_engage.png"
+- state: Engaging
+  text: "発進します"
+  img_path: "$(env HOME)/data/img_src/engaging.png"
+- state: Arrived
+  text: "到着"
+  img_path: "$(env HOME)/data/img_src/arrived.png"
+- state: ObstacleDetecting
+  text: "障害物検知"
+  img_path: "$(env HOME)/data/img_src/obstacle_detecting.png"
+- state: Stopline
+  text: "一時停止線"
+  img_path: "$(env HOME)/data/img_src/stopline.png"
+- state: Driving
+  text: "自動走行中"
+  img_path: "$(env HOME)/data/img_src/driving.png"
+  sound_bgm:
+    path: "$(env HOME)/data/sounds/bgm_sample.wav"
+    loop: true
+- state: Stopping
+  text: "停車中"
+  img_path: "$(env HOME)/data/img_src/stopping.png"
+- state: Straight
+- state: RightTurn
+  sound_voice:
+    path: "$(env HOME)/data/sounds/blinker_sample.wav"
+    loop: true
+- state: LeftTurn
+  sound_voice:
+    path: "$(env HOME)/data/sounds/blinker_sample.wav"
+    loop: true
