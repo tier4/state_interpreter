@@ -116,14 +116,40 @@ void StateInterpreter::initStateMapFromYaml(const std::string file_path)
   state_map_["Null"] = null_info;
 }
 
+void StateInterpreter::updateStopFactor()
+{
+  stop_factor_ = NONE;
+
+  if (obstacle_waypoint_ != -1 && stopline_waypoint_ != -1)
+  {
+    if (obstacle_waypoint_ >= stopline_waypoint_)
+      stop_factor_ = OBSTACLE;
+    else
+      stop_factor_ = STOPLINE;
+  }
+  else if (obstacle_waypoint_ != -1)
+  {
+    stop_factor_ = OBSTACLE;
+  }
+  else if (stopline_waypoint_ != -1)
+  {
+    stop_factor_ = STOPLINE;
+  }
+}
+
 void StateInterpreter::callbackFromDecisionMakerState(const std_msgs::String& msg)
 {
   decision_maker_state_ = msg.data;
 }
 
-void StateInterpreter::callbackFromStopWaypoint(const autoware_msgs::StopWaypointStatus& msg)
+void StateInterpreter::callbackFromObstacleWaypoint(const std_msgs::Int32& msg)
 {
-  stop_waypoint_type_ = msg.stop_type;
+  obstacle_waypoint_ = msg.data;
+}
+
+void StateInterpreter::callbackFromStoplineWaypoint(const std_msgs::Int32& msg)
+{
+  stopline_waypoint_ = msg.data;
 }
 
 void StateInterpreter::callbackFromCurrentVelocity(const geometry_msgs::TwistStamped& msg)
@@ -172,6 +198,8 @@ void StateInterpreter::callbackFromDiagnostics(const diagnostic_msgs::Diagnostic
 
 void StateInterpreter::stateUpdate()
 {
+  updateStopFactor();
+
   static std::string prev_state = "Null";
 
   if (decision_maker_state_.find("RightTurn") != std::string::npos)
@@ -238,13 +266,13 @@ void StateInterpreter::stateUpdate()
     current_state_first_ = "Arrived";
     current_state_code_.data = 501;
   }
-  else if (decision_maker_state_.find("StopLine\n") != std::string::npos && stop_waypoint_type_ == autoware_msgs::StopWaypointStatus::STOPLINE)
+  else if (decision_maker_state_.find("StopLine\n") != std::string::npos && stop_factor_ == STOPLINE)
   {
     current_state_first_ = "Stopline";
     current_state_code_.data += 2;
   }
   else if (decision_maker_state_.find("Go\n") != std::string::npos
-        && (stop_waypoint_type_ == autoware_msgs::StopWaypointStatus::WAYPOINT_OBSTACLE || stop_waypoint_type_ == autoware_msgs::StopWaypointStatus::CROSSWALK_OBSTACLE))
+        && stop_factor_ == OBSTACLE)
         {
     current_state_first_ = "ObstacleDetecting";
     current_state_code_.data += 3;
@@ -255,7 +283,7 @@ void StateInterpreter::stateUpdate()
   }
 
   if (current_state_first_ == "WaitEngage"
-        && (stop_waypoint_type_ == autoware_msgs::StopWaypointStatus::WAYPOINT_OBSTACLE || stop_waypoint_type_ == autoware_msgs::StopWaypointStatus::CROSSWALK_OBSTACLE))
+        && stop_factor_ == OBSTACLE)
   {
     current_state_first_ = "ObstacleDetecting";
   }

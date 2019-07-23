@@ -9,8 +9,6 @@
 #include <map>
 #include <sstream>
 
-#include <autoware_msgs/StopWaypointStatus.h>
-
 #include <geometry_msgs/TwistStamped.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
@@ -41,12 +39,19 @@ struct StateInfo {
   }
 };
 
+enum StopFactor {
+  NONE,
+  OBSTACLE,
+  STOPLINE,
+  OTHER
+};
+
 class StateInterpreter {
 private:
   ros::NodeHandle nh_;
   ros::NodeHandle private_nh_;
   ros::Publisher text_pub, upper_img_path_pub, lower_img_path_pub, state_code_pub;
-  ros::Subscriber state_sub, stop_waypoint_sub, current_vel_sub, diagnostics_sub_;
+  ros::Subscriber state_sub, obstacle_waypoint_sub_, stopline_waypoint_sub_, current_vel_sub, diagnostics_sub_;
   std::unique_ptr<sound_play::SoundClient> bgm_client_;
   std::unique_ptr<sound_play::SoundClient> voice_client_;
 
@@ -64,7 +69,9 @@ private:
   bool voice_end_;
   bool received_bgm_diag_;
   bool received_voice_diag_;
-  int stop_waypoint_type_;
+  StopFactor stop_factor_;
+  int obstacle_waypoint_;
+  int stopline_waypoint_;
   double current_velocity_;
   std::string decision_maker_state_;
 
@@ -77,19 +84,21 @@ private:
   std::string sound_bgm_topic_;
   std::string sound_voice_topic_;
 
+  std::string getPathByFind(const std::string input_str);
+  std::string getPathByEnv(const std::string input_str);
   void initStateMapFromYaml(const std::string file_path);
+  void updateStopFactor();
 
   void callbackFromDecisionMakerState(const std_msgs::String& msg);
   void callbackFromStateCommand(const std_msgs::String& msg);
-  void callbackFromStopWaypoint(const autoware_msgs::StopWaypointStatus& msg);
+  void callbackFromObstacleWaypoint(const std_msgs::Int32& msg);
+  void callbackFromStoplineWaypoint(const std_msgs::Int32& msg);
   void callbackFromCurrentVelocity(const geometry_msgs::TwistStamped& msg);
   void callbackFromDiagnostics(const diagnostic_msgs::DiagnosticArray& msg);
   void stateUpdate();
   void soundBgmUpdate();
   void soundVoiceUpdate();
 
-  std::string getPathByFind(const std::string input_str);
-  std::string getPathByEnv(const std::string input_str);
 
 public:
   StateInterpreter()
@@ -101,7 +110,9 @@ public:
     , voice_end_(false)
     , received_bgm_diag_(false)
     , received_voice_diag_(false)
-    , stop_waypoint_type_(0)
+    , stop_factor_(NONE)
+    , obstacle_waypoint_(-1)
+    , stopline_waypoint_(-1)
     , current_velocity_(0.0)
     , decision_maker_state_("")
     , text_publish_topic_("/state_interpreter/state_text")
@@ -127,7 +138,8 @@ public:
 
     // subscriber
     state_sub = nh_.subscribe("/decision_maker/state", 1, &StateInterpreter::callbackFromDecisionMakerState, this);
-    stop_waypoint_sub = nh_.subscribe("/stop_waypoint_status", 1, &StateInterpreter::callbackFromStopWaypoint, this);
+    obstacle_waypoint_sub_ = nh_.subscribe("/obstacle_waypoint", 1, &StateInterpreter::callbackFromObstacleWaypoint, this);
+    stopline_waypoint_sub_ = nh_.subscribe("/stopline_waypoint", 1, &StateInterpreter::callbackFromStoplineWaypoint, this);
     current_vel_sub = nh_.subscribe("/current_velocity", 1, &StateInterpreter::callbackFromCurrentVelocity, this);
     diagnostics_sub_ = nh_.subscribe("/diagnostics", 5, &StateInterpreter::callbackFromDiagnostics, this);
 
