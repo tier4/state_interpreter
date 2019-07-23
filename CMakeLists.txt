@@ -58,10 +58,18 @@ target_link_libraries(state_interpreter_node
   -lyaml-cpp
 )
 
-add_dependencies(state_interpreter_node autoware_msgs_generate_msgs_cpp ${catkin_EXPORTED_TARGETS})
+add_dependencies(state_interpreter_node ${catkin_EXPORTED_TARGETS})
 
 install(TARGETS state_interpreter_node
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY sample_dataset/
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/sample_dataset
+        PATTERN ".svn" EXCLUDE)
+
+install(DIRECTORY launch/
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+        PATTERN ".svn" EXCLUDE)
+

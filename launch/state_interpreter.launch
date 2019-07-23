@@ -2,7 +2,7 @@
   <arg name="text_publish_topic" default="/state_interpreter/state_text" />
   <arg name="sound_bgm_topic" default="/sound_bgm/robotsound" />
   <arg name="sound_voice_topic" default="/sound_voice/robotsound" />
-  <arg name="state_img_files" default="$(find state_interpreter)/state_img_files.yaml" />
+  <arg name="state_img_files" default="$(find state_interpreter)/sample_dataset/display_conf.yaml" />
 
   <group ns="sound_bgm">
     <node pkg="sound_play" type="soundplay_node.py" name="soundplay_node" output="screen"/>

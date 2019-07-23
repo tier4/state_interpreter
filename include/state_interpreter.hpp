@@ -73,7 +73,6 @@ private:
   std::string upper_img_path_publish_topic_;
   std::string lower_img_path_publish_topic_;
   std::string state_code_publish_topic_;
-  std::string bgm_file_name_;
   std::string state_img_files_;
   std::string sound_bgm_topic_;
   std::string sound_voice_topic_;
@@ -109,7 +108,6 @@ public:
     , upper_img_path_publish_topic_("/state_interpreter/upper_state_img_path")
     , lower_img_path_publish_topic_("/state_interpreter/lower_state_img_path")
     , state_code_publish_topic_("/state_interpreter/state_code")
-    , bgm_file_name_("")
     , state_img_files_("")
     , sound_bgm_topic_("")
     , sound_voice_topic_("")
@@ -119,7 +117,6 @@ public:
     private_nh_.getParam("upper_img_path_publish_topic", upper_img_path_publish_topic_);
     private_nh_.getParam("lower_img_path_publish_topic", lower_img_path_publish_topic_);
     private_nh_.getParam("state_code_publish_topic", state_code_publish_topic_);
-    private_nh_.getParam("bgm_file_name", bgm_file_name_);
     private_nh_.getParam("state_img_files", state_img_files_);
     private_nh_.getParam("sound_bgm_topic", sound_bgm_topic_);
     private_nh_.getParam("sound_voice_topic", sound_voice_topic_);
