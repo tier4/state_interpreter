@@ -202,28 +202,44 @@ void StateInterpreter::stateUpdate()
 
   static std::string prev_state = "Null";
 
-  if (decision_maker_state_.find("RightTurn") != std::string::npos)
-  {
-    current_state_blinker_ = "RightTurn";
-  }
-  else if (decision_maker_state_.find("LeftTurn") != std::string::npos)
-  {
-    current_state_blinker_ = "LeftTurn";
-  }
-  else
-  {
-    current_state_blinker_ = "Straight";
-  }
-
   if (decision_maker_state_.find("\nDriving\n") != std::string::npos)
   {
     current_state_second_ = "Driving";
-    current_state_code_.data = 300;
+    if (decision_maker_state_.find("RightTurn") != std::string::npos)
+    {
+      current_state_blinker_ = "RightTurn";
+      current_state_code_.data = 304;
+    }
+    else if (decision_maker_state_.find("LeftTurn") != std::string::npos)
+    {
+      current_state_blinker_ = "LeftTurn";
+      current_state_code_.data = 305;
+    }
+    else
+    {
+      current_state_blinker_ = "Straight";
+      current_state_code_.data = 300;
+    }
   }
   if (current_velocity_ < 0.1)
   {
     current_state_second_ = "Stopping";
-    current_state_code_.data = 400;
+    if (decision_maker_state_.find("RightTurn") != std::string::npos)
+    {
+      current_state_blinker_ = "RightTurn";
+      current_state_code_.data = 404;
+    }
+    else if (decision_maker_state_.find("LeftTurn") != std::string::npos)
+    {
+      current_state_blinker_ = "LeftTurn";
+      current_state_code_.data = 405;
+    }
+    else
+    {
+      current_state_blinker_ = "Straight";
+      current_state_code_.data = 400;
+    }
+
   }
   if (decision_maker_state_ == "")
   {
