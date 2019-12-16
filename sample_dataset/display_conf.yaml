@@ -29,18 +29,9 @@
 - state: Driving
   text: "自動走行中"
   img_path: "$(find state_interpreter)/sample_dataset/img_src/driving.png"
-  sound_bgm:
-    path: "$(find state_interpreter)/sample_dataset/sounds/bgm_sample.mp3"
-    loop: true
 - state: Stopping
   text: "停車中"
   img_path: "$(find state_interpreter)/sample_dataset/img_src/stopping.png"
 - state: Straight
 - state: RightTurn
-  sound_voice:
-    path: "$(find state_interpreter)/sample_dataset/sounds/blinker_sample.wav"
-    loop: true
 - state: LeftTurn
-  sound_voice:
-    path: "$(find state_interpreter)/sample_dataset/sounds/blinker_sample.wav"
-    loop: true
