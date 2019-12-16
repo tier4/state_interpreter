@@ -202,28 +202,72 @@ void StateInterpreter::stateUpdate()
 
   static std::string prev_state = "Null";
 
-  if (decision_maker_state_.find("RightTurn") != std::string::npos)
-  {
-    current_state_blinker_ = "RightTurn";
-  }
-  else if (decision_maker_state_.find("LeftTurn") != std::string::npos)
-  {
-    current_state_blinker_ = "LeftTurn";
-  }
-  else
-  {
-    current_state_blinker_ = "Straight";
-  }
-
   if (decision_maker_state_.find("\nDriving\n") != std::string::npos)
   {
     current_state_second_ = "Driving";
-    current_state_code_.data = 300;
+    if (decision_maker_state_.find("RightTurn") != std::string::npos)
+    {
+      current_state_blinker_ = "RightTurn";
+      current_state_code_.data = 304;
+    }
+    else if (decision_maker_state_.find("LeftTurn") != std::string::npos)
+    {
+      current_state_blinker_ = "LeftTurn";
+      current_state_code_.data = 305;
+    }
+    else
+    {
+      if (decision_maker_state_.find("StopLine\n") != std::string::npos && stop_factor_ == STOPLINE)
+      {
+        current_state_first_ = "Stopline";
+        current_state_code_.data = 302;
+      }
+      else if (decision_maker_state_.find("Go\n") != std::string::npos
+               && stop_factor_ == OBSTACLE)
+      {
+        current_state_first_ = "ObstacleDetecting";
+        current_state_code_.data = 303;
+      }
+      else
+      {
+        current_state_blinker_ = "Straight";
+        current_state_code_.data = 300;
+      }
+    }
   }
   if (current_velocity_ < 0.1)
   {
     current_state_second_ = "Stopping";
-    current_state_code_.data = 400;
+    if (decision_maker_state_.find("RightTurn") != std::string::npos)
+    {
+      current_state_blinker_ = "RightTurn";
+      current_state_code_.data = 404;
+    }
+    else if (decision_maker_state_.find("LeftTurn") != std::string::npos)
+    {
+      current_state_blinker_ = "LeftTurn";
+      current_state_code_.data = 405;
+    }
+    else
+    {
+      if (decision_maker_state_.find("StopLine\n") != std::string::npos && stop_factor_ == STOPLINE)
+      {
+        current_state_first_ = "Stopline";
+        current_state_code_.data = 402;
+      }
+      else if (decision_maker_state_.find("Go\n") != std::string::npos
+               && stop_factor_ == OBSTACLE)
+      {
+        current_state_first_ = "ObstacleDetecting";
+        current_state_code_.data = 403;
+      }
+      else
+      {
+        current_state_blinker_ = "Straight";
+        current_state_code_.data = 400;
+      }
+    }
+
   }
   if (decision_maker_state_ == "")
   {
@@ -265,17 +309,6 @@ void StateInterpreter::stateUpdate()
   {
     current_state_first_ = "Arrived";
     current_state_code_.data = 501;
-  }
-  else if (decision_maker_state_.find("StopLine\n") != std::string::npos && stop_factor_ == STOPLINE)
-  {
-    current_state_first_ = "Stopline";
-    current_state_code_.data += 2;
-  }
-  else if (decision_maker_state_.find("Go\n") != std::string::npos
-        && stop_factor_ == OBSTACLE)
-        {
-    current_state_first_ = "ObstacleDetecting";
-    current_state_code_.data += 3;
   }
   else if(decision_maker_state_.find("\nDriving\n") != std::string::npos && current_velocity_ != 0.0)
   {
