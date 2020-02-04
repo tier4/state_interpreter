@@ -12,6 +12,7 @@
 #include <geometry_msgs/TwistStamped.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Bool.h>
 #include <diagnostic_msgs/DiagnosticArray.h>
 
 #include "state_interpreter/Int32Stamped.h"
@@ -51,7 +52,7 @@ private:
   ros::NodeHandle nh_;
   ros::NodeHandle private_nh_;
   ros::Publisher text_pub, upper_img_path_pub, lower_img_path_pub, state_code_pub;
-  ros::Subscriber state_sub, obstacle_waypoint_sub_, stopline_waypoint_sub_, current_vel_sub, diagnostics_sub_;
+  ros::Subscriber state_sub, obstacle_waypoint_sub_, stopline_waypoint_sub_, current_vel_sub, diagnostics_sub_, emergency_button_sub_;
   std::unique_ptr<sound_play::SoundClient> bgm_client_;
   std::unique_ptr<sound_play::SoundClient> voice_client_;
 
@@ -74,6 +75,7 @@ private:
   int stopline_waypoint_;
   double current_velocity_;
   std::string decision_maker_state_;
+  bool emergency_button_;
 
   // ros param
   std::string text_publish_topic_;
@@ -95,6 +97,7 @@ private:
   void callbackFromStoplineWaypoint(const std_msgs::Int32& msg);
   void callbackFromCurrentVelocity(const geometry_msgs::TwistStamped& msg);
   void callbackFromDiagnostics(const diagnostic_msgs::DiagnosticArray& msg);
+  void callbackFromEmergencyButton(const std_msgs::Bool& msg);
   void stateUpdate();
   void soundBgmUpdate();
   void soundVoiceUpdate();
@@ -122,6 +125,7 @@ public:
     , state_img_files_("")
     , sound_bgm_topic_("")
     , sound_voice_topic_("")
+    , emergency_button_(false)
   {
     // rosparam
     private_nh_.getParam("text_publish_topic", text_publish_topic_);
@@ -142,6 +146,7 @@ public:
     stopline_waypoint_sub_ = nh_.subscribe("/stopline_waypoint", 1, &StateInterpreter::callbackFromStoplineWaypoint, this);
     current_vel_sub = nh_.subscribe("/current_velocity", 1, &StateInterpreter::callbackFromCurrentVelocity, this);
     diagnostics_sub_ = nh_.subscribe("/diagnostics", 5, &StateInterpreter::callbackFromDiagnostics, this);
+    emergency_button_sub_ = nh_.subscribe("/vehicle/emergency_button", 1, &StateInterpreter::callbackFromEmergencyButton, this);
 
     // publisher
     text_pub = nh_.advertise<std_msgs::String>(text_publish_topic_, 1);

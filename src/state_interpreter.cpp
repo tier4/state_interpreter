@@ -196,6 +196,11 @@ void StateInterpreter::callbackFromDiagnostics(const diagnostic_msgs::Diagnostic
   }
 }
 
+void StateInterpreter::callbackFromEmergencyButton(const std_msgs::Bool& msg)
+{
+  emergency_button_ = msg.data;
+}
+
 void StateInterpreter::stateUpdate()
 {
   updateStopFactor();
@@ -340,6 +345,12 @@ void StateInterpreter::stateUpdate()
   else
   {
     lower_state_img_path_.data = state_map_.at(current_state_second_).img_path;
+  }
+
+  if (emergency_button_)
+  {
+    current_state_first_ = "Emergency";
+    current_state_code_.data = 601;
   }
 
   state_text_.data = state_map_.at(current_state_first_).text + "\n" + state_map_.at(current_state_second_).text;
