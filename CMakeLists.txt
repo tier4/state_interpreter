@@ -58,7 +58,7 @@ target_link_libraries(state_interpreter_node
   -lyaml-cpp
 )
 
-add_dependencies(state_interpreter_node ${catkin_EXPORTED_TARGETS})
+add_dependencies(state_interpreter_node ${catkin_EXPORTED_TARGETS} ${PROJECT_NAME}_generate_messages_cpp)
 
 install(TARGETS state_interpreter_node
         ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
