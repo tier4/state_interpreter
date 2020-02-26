@@ -201,6 +201,9 @@ void StateInterpreter::stateUpdate()
   updateStopFactor();
 
   static std::string prev_state = "Null";
+  static bool is_engaging = false;
+  static unsigned int engaging_count = 0;
+  constexpr unsigned int max_engaging_count = 10;
 
   if (decision_maker_state_.find("RightTurn") != std::string::npos)
   {
@@ -219,6 +222,10 @@ void StateInterpreter::stateUpdate()
   {
     current_state_second_ = "Driving";
     current_state_code_.data = 300;
+    if (prev_state.find("\nDriveReady\n") != std::string::npos)
+    {
+      is_engaging = true;
+    }
   }
   if (current_velocity_ < 0.1)
   {
@@ -230,7 +237,18 @@ void StateInterpreter::stateUpdate()
     current_state_second_ = "Null";
   }
 
-  if (decision_maker_state_.find("Init\n") != std::string::npos)
+  if (is_engaging)
+  {
+    current_state_first_ = "Engaging";
+    current_state_code_.data = 301;
+    engaging_count++;
+    if (engaging_count >= max_engaging_count)
+    {
+      is_engaging = false;
+      engaging_count = 0;
+    }
+  }
+  else if (decision_maker_state_.find("Init\n") != std::string::npos)
   {
     current_state_first_ = "Init";
     current_state_code_.data = 101;
@@ -255,11 +273,6 @@ void StateInterpreter::stateUpdate()
   {
     current_state_first_ = "WaitEngage";
     current_state_code_.data = 203;
-  }
-  else if (decision_maker_state_.find("\nDriving\n") != std::string::npos && prev_state.find("\nDriveReady\n") != std::string::npos)
-  {
-    current_state_first_ = "Engaging";
-    current_state_code_.data = 301;
   }
   else if (decision_maker_state_.find("MissionComplete\n") != std::string::npos)
   {
